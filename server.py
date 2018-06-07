@@ -21,6 +21,10 @@ def register():
     email = request.form['html_email']
     password = request.form['html_password']
     confirm = request.form['html_confirm']
+
+    user = create_user(email, fullname, password)
+    session['user_id'] = user.id
+    session['name'] = user.name
     return redirect(url_for('index'))
 
 @app.route('/login', methods=['POST'])
@@ -28,6 +32,12 @@ def login():
     email = request.form['html_email']
     password = request.form['html_password']
 
+    return redirect(url_for('index'))
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
     return redirect(url_for('index'))
 
 app.run(debug=True)
