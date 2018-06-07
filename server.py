@@ -22,10 +22,15 @@ def register():
     password = request.form['html_password']
     confirm = request.form['html_confirm']
 
-    user = create_user(email, fullname, password)
-    session['user_id'] = user.id
-    session['name'] = user.name
-    return redirect(url_for('index'))
+    try:
+        user = create_user(email, fullname, password)
+        session['user_id'] = user.id
+        session['name'] = user.name
+        return redirect(url_for('index'))
+    except:
+        flash('email already registered dude')
+    
+    return redirect(url_for('authenticate'))
 
 @app.route('/login', methods=['POST'])
 def login():
