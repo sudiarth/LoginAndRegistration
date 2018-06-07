@@ -11,4 +11,8 @@ EMAIL_REGEX = re.compile(r'^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9
 def index():
     return render_template('index.html')
 
+@app.route('/authenticate')
+def authenticate():
+    return render_template('authenticate.html')
+
 app.run(debug=True)
