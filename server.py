@@ -7,6 +7,12 @@ app.secret_key = '8118d0875ad5b6b3ad830b956b111fb0'
 
 EMAIL_REGEX = re.compile(r'^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$')
 
+def is_blank(name, field):
+    if len(field) == 0:
+        flash('{} cannot be blank'.format(name))
+        return True
+    return False
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -22,13 +28,29 @@ def register():
     password = request.form['html_password']
     confirm = request.form['html_confirm']
 
-    try:
-        user = create_user(email, fullname, password)
-        session['user_id'] = user.id
-        session['name'] = user.name
-        return redirect(url_for('index'))
-    except:
-        flash('email already registered dude')
+    is_valid = True
+
+    is_valid = not is_blank('fullname', fullname)
+    is_valid = not is_blank('email', email)
+    is_valid = not is_blank('password', password)
+    is_valid = not is_blank('confirm', confirm)
+
+    if password != confirm:
+        flash('password not match')
+        is_valid = False
+    if len(password) < 6:
+        flash('pass to short')
+    if not EMAIL_REGEX.match(email):
+        flash('email is not right format')
+    
+    if is_valid:
+        try:
+            user = create_user(email, fullname, password)
+            session['user_id'] = user.id
+            session['name'] = user.name
+            return redirect(url_for('index'))
+        except:
+            flash('email already registered dude')
     
     return redirect(url_for('authenticate'))
 
