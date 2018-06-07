@@ -59,7 +59,20 @@ def login():
     email = request.form['html_email']
     password = request.form['html_password']
 
-    return redirect(url_for('index'))
+    try:
+        user = get_user_by_email(email)
+        
+        if password == user.password:
+            session['user_id'] = user.id
+            session['name'] = user.name
+            return redirect(url_for('index'))
+        else:
+            flash('Password not match')
+    except:
+        flash('Invalid login')
+
+    return redirect(url_for('authenticate'))
+
 
 
 @app.route('/logout')
